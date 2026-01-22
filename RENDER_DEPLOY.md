@@ -26,7 +26,7 @@
 - **Region**: `Singapore`（日本に近い）
 - **Branch**: `main`
 - **Root Directory**: （空白のまま）
-- **Runtime**: `Python 3`（自動的に`runtime.txt`のバージョンを使用）
+- **Runtime**: `Python 3.11` を明示的に選択（重要！`runtime.txt`だけでは不十分な場合があります）
 - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
 - **Start Command**: `python app.py`
 
