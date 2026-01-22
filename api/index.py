@@ -8,5 +8,6 @@ from app import app
 
 # Vercel用のエントリーポイント
 # VercelのPythonランタイムはWSGIアプリケーションを直接エクスポートできます
+# handlerという名前でエクスポートする必要があります
 handler = app
 

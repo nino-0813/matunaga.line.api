@@ -17,11 +17,19 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # LINE Botの設定
-line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN') or '')
-webhook_handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET') or '')
+LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
+LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+# 環境変数のチェック（本番環境では必須）
+if not LINE_CHANNEL_ACCESS_TOKEN or not LINE_CHANNEL_SECRET or not OPENAI_API_KEY:
+    logger.warning("環境変数が設定されていません。LINE_CHANNEL_ACCESS_TOKEN、LINE_CHANNEL_SECRET、OPENAI_API_KEYを設定してください。")
+
+line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN or '')
+webhook_handler = WebhookHandler(LINE_CHANNEL_SECRET or '')
 
 # OpenAI APIの設定
-openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 # エステサロンのプロンプト設定
 SYSTEM_PROMPT = """あなたは「二の腕痩せ・二の腕ケア」に特化したエステサロンのプロフェッショナルAIです。
@@ -60,6 +68,10 @@ SYSTEM_PROMPT = """あなたは「二の腕痩せ・二の腕ケア」に特化�
 def get_ai_response(user_message, conversation_history=[], custom_prompt=None):
     """OpenAI APIを使用してAI応答を取得"""
     try:
+        if openai_client is None:
+            logger.error("OpenAI APIキーが設定されていません")
+            return "申し訳ございません。設定エラーが発生しました。管理者にお問い合わせください。"
+        
         prompt = custom_prompt if custom_prompt else SYSTEM_PROMPT
         messages = [
             {"role": "system", "content": prompt}
@@ -123,6 +135,14 @@ GUIDANCE_COUNSELING = """ここまで教えてくださって、ありがとう�
 def generate_ai_options(conversation_history, conversation_count):
     """AIを使って選択肢を動的に生成（軽い質問形式）"""
     try:
+        if openai_client is None:
+            logger.error("OpenAI APIキーが設定されていません")
+            # フォールバック
+            return [
+                ("産後でも大丈夫？", "産後でも大丈夫？"),
+                ("痛くない？", "痛くない？")
+            ]
+        
         options_prompt = """あなたは二の腕専門のカウンセラーAIです。ユーザーが次に聞きたくなる「軽い質問」を2つ考えてください。
 
 【対応できる軽い質問の例】
