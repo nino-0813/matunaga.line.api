@@ -17,8 +17,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # LINE Botの設定
-line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
-handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
+line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN') or '')
+webhook_handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET') or '')
 
 # OpenAI APIの設定
 openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -205,14 +205,14 @@ def callback():
     body = request.get_data(as_text=True)
     
     try:
-        handler.handle(body, signature)
+        webhook_handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
     
     return 'OK'
 
 
-@handler.add(MessageEvent, message=TextMessage)
+@webhook_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     """テキストメッセージを処理"""
     user_id = event.source.user_id
