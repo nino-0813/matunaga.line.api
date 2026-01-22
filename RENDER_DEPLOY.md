@@ -1,7 +1,7 @@
 # Renderでのデプロイ手順
 
 ## 前提条件
-- GitHubリポジトリ: https://github.com/nino-0813/matunaga.ai.api
+- GitHubリポジトリ: https://github.com/nino-0813/matunaga.line.api
 - Renderアカウント（無料で作成可能）
 
 ## ステップ1: Renderアカウントの作成
@@ -17,7 +17,7 @@
 3. GitHubリポジトリを接続:
    - "Connect account" をクリック（初回のみ）
    - GitHubの認証を許可
-   - リポジトリ `nino-0813/matunaga.ai.api` を選択
+   - リポジトリ `nino-0813/matunaga.line.api` を選択
 
 ## ステップ3: サービスの設定
 
